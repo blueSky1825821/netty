@@ -21,6 +21,7 @@ import io.netty.util.ReferenceCountUtil;
 import io.netty.util.internal.EmptyArrays;
 import io.netty.util.internal.OneTimeTask;
 import io.netty.util.internal.PlatformDependent;
+import io.netty.util.internal.ThreadLocalRandom;
 import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 
@@ -53,7 +54,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
     private MessageSizeEstimator.Handle estimatorHandle;
 
     private final Channel parent;
-    private final ChannelId id;
+    private final long hashCode = ThreadLocalRandom.current().nextLong();
     private final Unsafe unsafe;
     private final ChannelPipeline pipeline;
     private final ChannelFuture succeededFuture = new SucceededChannelFuture(this, null);
@@ -78,49 +79,14 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
      */
     protected AbstractChannel(Channel parent) {
         this.parent = parent;
-        id = DefaultChannelId.newInstance();
         unsafe = newUnsafe();
         pipeline = new DefaultChannelPipeline(this);
-    }
-
-    /**
-     * Creates a new instance.
-     *
-     * @param parent
-     *        the parent of this channel. {@code null} if there's no parent.
-     */
-    protected AbstractChannel(Channel parent, ChannelId id) {
-        this.parent = parent;
-        this.id = id;
-        unsafe = newUnsafe();
-        pipeline = new DefaultChannelPipeline(this);
-    }
-
-    @Override
-    public final ChannelId id() {
-        return id;
     }
 
     @Override
     public boolean isWritable() {
         ChannelOutboundBuffer buf = unsafe.outboundBuffer();
         return buf != null && buf.isWritable();
-    }
-
-    @Override
-    public long bytesBeforeUnwritable() {
-        ChannelOutboundBuffer buf = unsafe.outboundBuffer();
-        // isWritable() is currently assuming if there is no outboundBuffer then the channel is not writable.
-        // We should be consistent with that here.
-        return buf != null ? buf.bytesBeforeUnwritable() : 0;
-    }
-
-    @Override
-    public long bytesBeforeWritable() {
-        ChannelOutboundBuffer buf = unsafe.outboundBuffer();
-        // isWritable() is currently assuming if there is no outboundBuffer then the channel is not writable.
-        // We should be consistent with that here.
-        return buf != null ? buf.bytesBeforeWritable() : Long.MAX_VALUE;
     }
 
     @Override
@@ -323,7 +289,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
      */
     @Override
     public final int hashCode() {
-        return id.hashCode();
+        return (int) hashCode;
     }
 
     /**
@@ -341,7 +307,21 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
             return 0;
         }
 
-        return id().compareTo(o.id());
+        long ret = hashCode - o.hashCode();
+        if (ret > 0) {
+            return 1;
+        }
+        if (ret < 0) {
+            return -1;
+        }
+
+        ret = System.identityHashCode(this) - System.identityHashCode(o);
+        if (ret != 0) {
+            return (int) ret;
+        }
+
+        // Jackpot! - different objects with same hashes
+        throw new Error();
     }
 
     /**
@@ -360,39 +340,12 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
         SocketAddress remoteAddr = remoteAddress();
         SocketAddress localAddr = localAddress();
         if (remoteAddr != null) {
-            SocketAddress srcAddr;
-            SocketAddress dstAddr;
-            if (parent == null) {
-                srcAddr = localAddr;
-                dstAddr = remoteAddr;
-            } else {
-                srcAddr = remoteAddr;
-                dstAddr = localAddr;
-            }
-
-            StringBuilder buf = new StringBuilder(96)
-                .append("[id: 0x")
-                .append(id.asShortText())
-                .append(", ")
-                .append(srcAddr)
-                .append(active? " => " : " :> ")
-                .append(dstAddr)
-                .append(']');
-            strVal = buf.toString();
+            String activeNotation = active? "-" : "!";
+            strVal = String.format("[id: 0x%08x, L:%s %s R:%s]", (int) hashCode, localAddr, activeNotation, remoteAddr);
         } else if (localAddr != null) {
-            StringBuilder buf = new StringBuilder(64)
-                .append("[id: 0x")
-                .append(id.asShortText())
-                .append(", ")
-                .append(localAddr)
-                .append(']');
-            strVal = buf.toString();
+            strVal = String.format("[id: 0x%08x, L:%s]", (int) hashCode, localAddr);
         } else {
-            StringBuilder buf = new StringBuilder(16)
-                .append("[id: 0x")
-                .append(id.asShortText())
-                .append(']');
-            strVal = buf.toString();
+            strVal = String.format("[id: 0x%08x]", (int) hashCode);
         }
 
         strValActive = active;
@@ -417,23 +370,9 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
     protected abstract class AbstractUnsafe implements Unsafe {
 
         private ChannelOutboundBuffer outboundBuffer = new ChannelOutboundBuffer(AbstractChannel.this);
-        private RecvByteBufAllocator.Handle recvHandle;
         private boolean inFlush0;
         /** true if the channel has never been registered, false otherwise */
         private boolean neverRegistered = true;
-
-        @Override
-        public RecvByteBufAllocator.Handle recvBufAllocHandle() {
-            if (recvHandle == null) {
-                recvHandle = config().getRecvByteBufAllocator().newHandle();
-            }
-            return recvHandle;
-        }
-
-        @Override
-        public final ChannelHandlerInvoker invoker() {
-            return eventLoop().asInvoker();
-        }
 
         @Override
         public final ChannelOutboundBuffer outboundBuffer() {
@@ -792,7 +731,6 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
             flush0();
         }
 
-        @SuppressWarnings("deprecation")
         protected void flush0() {
             if (inFlush0) {
                 // Avoid re-entrance
