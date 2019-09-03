@@ -55,6 +55,8 @@ import java.util.List;
 @Sharable
 public class LengthFieldPrepender extends MessageToMessageEncoder<ByteBuf> {
 
+    //BIG-ENDIAN:最低地址存放最高有效字节
+    //LITTLE_ENDIAN:最低地址存放最低有效字节 。
     private final ByteOrder byteOrder;
     private final int lengthFieldLength;
     //长度计算包含长度字段本身
