@@ -57,6 +57,7 @@ public class LengthFieldPrepender extends MessageToMessageEncoder<ByteBuf> {
 
     private final ByteOrder byteOrder;
     private final int lengthFieldLength;
+    //长度计算包含长度字段本身
     private final boolean lengthIncludesLengthFieldLength;
     private final int lengthAdjustment;
 
