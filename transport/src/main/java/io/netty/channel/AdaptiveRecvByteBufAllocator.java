@@ -34,8 +34,11 @@ import static java.lang.Math.min;
  */
 public class AdaptiveRecvByteBufAllocator extends DefaultMaxMessagesRecvByteBufAllocator {
 
+    //最小分配
     static final int DEFAULT_MINIMUM = 64;
+    //初始分配
     static final int DEFAULT_INITIAL = 1024;
+    //最大分配
     static final int DEFAULT_MAXIMUM = 65536;
 
     private static final int INDEX_INCREMENT = 4;
@@ -45,10 +48,14 @@ public class AdaptiveRecvByteBufAllocator extends DefaultMaxMessagesRecvByteBufA
 
     static {
         List<Integer> sizeTable = new ArrayList<Integer>();
+        //16、32、48、64、80...496:  + 16
+        //小于512时，增加64，减小16
         for (int i = 16; i < 512; i += 16) {
             sizeTable.add(i);
         }
-
+        //512、512*2、512*4、512*8、512*16直到整形最大值,
+        //大于512时，16倍增大，1倍减小
+        //后面会判断最大，最小限制，默认在64和65536之间。
         for (int i = 512; i > 0; i <<= 1) {
             sizeTable.add(i);
         }
@@ -65,6 +72,7 @@ public class AdaptiveRecvByteBufAllocator extends DefaultMaxMessagesRecvByteBufA
     @Deprecated
     public static final AdaptiveRecvByteBufAllocator DEFAULT = new AdaptiveRecvByteBufAllocator();
 
+    //查找size对应的index
     private static int getSizeTableIndex(final int size) {
         for (int low = 0, high = SIZE_TABLE.length - 1;;) {
             if (high < low) {
@@ -101,6 +109,7 @@ public class AdaptiveRecvByteBufAllocator extends DefaultMaxMessagesRecvByteBufA
             this.maxIndex = maxIndex;
 
             index = getSizeTableIndex(initial);
+            //初始值
             nextReceiveBufferSize = SIZE_TABLE[index];
         }
 
@@ -110,6 +119,7 @@ public class AdaptiveRecvByteBufAllocator extends DefaultMaxMessagesRecvByteBufA
             // This helps adjust more quickly when large amounts of data is pending and can avoid going back to
             // the selector to check for more data. Going back to the selector can add significant latency for large
             // data transfers.
+            //判断是否预估的空间都被“读”到的数据填满了，如果填满了，尝试扩容再试试。
             if (bytes == attemptedBytesRead()) {
                 record(bytes);
             }
@@ -121,15 +131,25 @@ public class AdaptiveRecvByteBufAllocator extends DefaultMaxMessagesRecvByteBufA
             return nextReceiveBufferSize;
         }
 
+        /**
+         * 缓存的容量会尽可能的足够大以读数据
+         * 也尽可能的小以不会浪费它的空间
+         * @param actualReadBytes
+         */
         private void record(int actualReadBytes) {
+            //尝试是否可以减小分配的空间仍然能满足需求：
+            //尝试方法：当前实际读取的size是否小于或等于打算缩小的尺寸
             if (actualReadBytes <= SIZE_TABLE[max(0, index - INDEX_DECREMENT - 1)]) {
+                //decreaseNow: 连续2次尝试减小都可以
                 if (decreaseNow) {
+                    //减小
                     index = max(index - INDEX_DECREMENT, minIndex);
                     nextReceiveBufferSize = SIZE_TABLE[index];
                     decreaseNow = false;
                 } else {
                     decreaseNow = true;
                 }
+            //判断是否实际读取的数据大于等于预估的，如果是，尝试扩容
             } else if (actualReadBytes >= nextReceiveBufferSize) {
                 index = min(index + INDEX_INCREMENT, maxIndex);
                 nextReceiveBufferSize = SIZE_TABLE[index];
@@ -172,6 +192,7 @@ public class AdaptiveRecvByteBufAllocator extends DefaultMaxMessagesRecvByteBufA
             throw new IllegalArgumentException("maximum: " + maximum);
         }
 
+        //控制size table区间最小值minIndex
         int minIndex = getSizeTableIndex(minimum);
         if (SIZE_TABLE[minIndex] < minimum) {
             this.minIndex = minIndex + 1;
@@ -179,6 +200,7 @@ public class AdaptiveRecvByteBufAllocator extends DefaultMaxMessagesRecvByteBufA
             this.minIndex = minIndex;
         }
 
+        //控制size table区间最大值maxIndex
         int maxIndex = getSizeTableIndex(maximum);
         if (SIZE_TABLE[maxIndex] > maximum) {
             this.maxIndex = maxIndex - 1;
