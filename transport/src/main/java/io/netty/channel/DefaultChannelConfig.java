@@ -68,10 +68,12 @@ public class DefaultChannelConfig implements ChannelConfig {
     private volatile boolean pinEventExecutor = true;
 
     public DefaultChannelConfig(Channel channel) {
+        //除UDP外都默认选择自适应接受缓存分配器
         this(channel, new AdaptiveRecvByteBufAllocator());
     }
 
     protected DefaultChannelConfig(Channel channel, RecvByteBufAllocator allocator) {
+        //UDP的使用固定SIZE的接受缓存分配器：FixedRecvByteBufAllocator
         setRecvByteBufAllocator(allocator, channel.metadata());
         this.channel = channel;
     }
