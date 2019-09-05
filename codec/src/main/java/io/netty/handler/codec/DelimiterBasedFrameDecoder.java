@@ -40,7 +40,7 @@ import java.util.List;
  * the following data in the buffer:
  * <pre>
  * +--------------+
- * | ABC\nDEF\r\n |
+ * | ABC\nDEF\n |
  * +--------------+
  * </pre>
  * a {@link DelimiterBasedFrameDecoder}({@link Delimiters#lineDelimiter() Delimiters.lineDelimiter()})

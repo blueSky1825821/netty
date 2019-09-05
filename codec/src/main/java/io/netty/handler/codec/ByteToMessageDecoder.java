@@ -130,6 +130,7 @@ public abstract class ByteToMessageDecoder extends ChannelInboundHandlerAdapter 
                         composite = alloc.compositeBuffer(Integer.MAX_VALUE);
                         composite.addComponent(true, cumulation);
                     }
+                    //避免内存复制
                     composite.addComponent(true, in);
                     in = null;
                     buffer = composite;

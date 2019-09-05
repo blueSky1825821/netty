@@ -42,6 +42,7 @@ public final class UnpooledByteBufAllocator extends AbstractByteBufAllocator imp
      * @param preferDirect {@code true} if {@link #buffer(int)} should try to allocate a direct buffer rather than
      *                     a heap buffer
      */
+    //直接可以切换使用堆外还是堆内内存
     public UnpooledByteBufAllocator(boolean preferDirect) {
         this(preferDirect, false);
     }
@@ -89,6 +90,7 @@ public final class UnpooledByteBufAllocator extends AbstractByteBufAllocator imp
         final ByteBuf buf;
         if (PlatformDependent.hasUnsafe()) {
             buf = noCleaner ? new InstrumentedUnpooledUnsafeNoCleanerDirectByteBuf(this, initialCapacity, maxCapacity) :
+                    //大多情况：
                     new InstrumentedUnpooledUnsafeDirectByteBuf(this, initialCapacity, maxCapacity);
         } else {
             buf = new InstrumentedUnpooledDirectByteBuf(this, initialCapacity, maxCapacity);
