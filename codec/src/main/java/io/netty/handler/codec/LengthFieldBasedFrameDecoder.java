@@ -51,8 +51,8 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
  *
  * BEFORE DECODE (14 bytes)         AFTER DECODE (14 bytes)
  * +--------+----------------+      +--------+----------------+
- * | Length | Actual Content |                   ----->| Length | Actual Content |
- * | 0x0005 | "ABC"          |      | 0x000C | "HELLO, WORLD" |
+ * | Length | Actual Content |----->| Length | Actual Content |
+ * | 0x000C | "HELLO, WORLD" |      | 0x000C | "HELLO, WORLD" |
  * +--------+----------------+      +--------+----------------+
  * </pre>
  *
