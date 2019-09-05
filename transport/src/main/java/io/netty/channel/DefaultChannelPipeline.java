@@ -1302,7 +1302,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
             onUnhandledInboundException(cause);
         }
 
-        //释放掉读到的消息，比如把buffer归还到池里去也是此次做，避免用户忘记归还
+        //释放掉读到的消息，比如假设msg是池化对象，把buffer归还到池里去也是此次做，避免用户忘记归还
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
             onUnhandledInboundMessage(ctx, msg);
