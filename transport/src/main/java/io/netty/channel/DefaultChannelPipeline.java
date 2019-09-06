@@ -127,6 +127,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         //一个group只用一个执行器
         Boolean pinEventExecutor = channel.config().getOption(ChannelOption.SINGLE_EVENTEXECUTOR_PER_GROUP);
         if (pinEventExecutor != null && !pinEventExecutor) {
+            //不固定，所以分配“下一个”
             return group.next();
         }
         Map<EventExecutorGroup, EventExecutor> childExecutors = this.childExecutors;
