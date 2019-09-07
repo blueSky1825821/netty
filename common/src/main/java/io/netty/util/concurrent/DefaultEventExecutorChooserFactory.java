@@ -52,6 +52,7 @@ public final class DefaultEventExecutorChooserFactory implements EventExecutorCh
         }
 
         @Override
+        //&运算效率更高，但是必须executors总数必须是2的幂次方（2，4，8...等）才能用
         public EventExecutor next() {
             return executors[idx.getAndIncrement() & executors.length - 1];
         }
