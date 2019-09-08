@@ -29,7 +29,8 @@ import java.util.Map.Entry;
  * the max bytes per read.
  */
 
-//无人调用
+//无人调用，加一个@Deprecated标识下
+@Deprecated
 public class DefaultMaxBytesRecvByteBufAllocator implements MaxBytesRecvByteBufAllocator {
     private volatile int maxBytesPerRead;
     private volatile int maxBytesPerIndividualRead;
