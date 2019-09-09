@@ -1373,6 +1373,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
 
         @Override
         public void read(ChannelHandlerContext ctx) {
+            //实际上就是注册读事件
             unsafe.beginRead();
         }
 
@@ -1410,7 +1411,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         @Override
         public void channelActive(ChannelHandlerContext ctx) {
             ctx.fireChannelActive();
-
+            //注册读事件
             readIfIsAutoRead();
         }
 
