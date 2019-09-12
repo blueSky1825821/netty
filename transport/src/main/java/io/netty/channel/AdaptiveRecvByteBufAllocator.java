@@ -132,7 +132,7 @@ public class AdaptiveRecvByteBufAllocator extends DefaultMaxMessagesRecvByteBufA
         }
 
         /**
-         * 缓存的容量会尽可能的足够大以读数据
+         * 接受数据buffer的容量会尽可能的足够大以接受数据
          * 也尽可能的小以不会浪费它的空间
          * @param actualReadBytes
          */
