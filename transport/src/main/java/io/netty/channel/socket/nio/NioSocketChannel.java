@@ -421,6 +421,7 @@ public class NioSocketChannel extends AbstractNioByteChannel implements io.netty
                     long attemptedBytes = in.nioBufferSize();
                     final long localWrittenBytes = ch.write(nioBuffers, 0, nioBufferCnt);
                     if (localWrittenBytes <= 0) {
+                        //缓存区满了，写不进去了，注册写事件。
                         incompleteWrite(true);
                         return;
                     }
@@ -434,6 +435,7 @@ public class NioSocketChannel extends AbstractNioByteChannel implements io.netty
             }
         } while (writeSpinCount > 0);
 
+        //写了16次数据，还是没有写完，直接schedule一个新的flush task出来。而不是注册写事件。
         incompleteWrite(writeSpinCount < 0);
     }
 
