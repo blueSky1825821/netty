@@ -572,7 +572,7 @@
               <includes>io/netty/**</includes>
               <includeScope>runtime</includeScope>
               <includeGroupIds>${project.groupId}</includeGroupIds>
-              <outputDirectory>${generatedSourceDir}</outputDirectory>
+              <outputDirectory>target/src</outputDirectory>
             </configuration>
           </execution>
 
