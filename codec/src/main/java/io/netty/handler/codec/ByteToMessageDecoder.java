@@ -444,7 +444,8 @@ public abstract class ByteToMessageDecoder extends ChannelInboundHandlerAdapter 
                 }
 
                 int oldInputLength = in.readableBytes();
-                //假设这个decoder handler被移除，那decode完之后需要清理数据。
+                //decode中时，不能执行完handler remove清理操作。
+                //那decode完之后需要清理数据。
                 decodeRemovalReentryProtection(ctx, in, out);
 
                 // Check if this handler was removed before continuing the loop.
