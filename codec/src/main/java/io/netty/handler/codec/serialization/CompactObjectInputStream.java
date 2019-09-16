@@ -51,7 +51,9 @@ class CompactObjectInputStream extends ObjectInputStream {
         case CompactObjectOutputStream.TYPE_FAT_DESCRIPTOR:
             return super.readClassDescriptor();
         case CompactObjectOutputStream.TYPE_THIN_DESCRIPTOR:
+            //读取class名字
             String className = readUTF();
+            //本地解析，找出class的信息
             Class<?> clazz = classResolver.resolve(className);
             return ObjectStreamClass.lookupAny(clazz);
         default:
