@@ -32,6 +32,7 @@ public final class DefaultEventExecutorChooserFactory implements EventExecutorCh
     @SuppressWarnings("unchecked")
     @Override
     public EventExecutorChooser newChooser(EventExecutor[] executors) {
+        //根据待绑定的executor是否是2的幂次方，做出不同的选择
         if (isPowerOfTwo(executors.length)) {
             return new PowerOfTwoEventExecutorChooser(executors);
         } else {
@@ -52,7 +53,7 @@ public final class DefaultEventExecutorChooserFactory implements EventExecutorCh
         }
 
         @Override
-        //&运算效率更高，但是必须executors总数必须是2的幂次方（2，4，8...等）才能用
+        //executors总数必须是2的幂次方（2，4，8...等）才会用,&运算效率更高
         public EventExecutor next() {
             return executors[idx.getAndIncrement() & executors.length - 1];
         }
