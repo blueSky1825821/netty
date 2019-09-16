@@ -69,7 +69,7 @@ public final class DefaultEventExecutorChooserFactory implements EventExecutorCh
 
         @Override
         public EventExecutor next() {
-            //Math.abs取正，不然可能是负数
+            //递增、取模，取正值，不然可能是负数
             return executors[Math.abs(idx.getAndIncrement() % executors.length)];
         }
     }
