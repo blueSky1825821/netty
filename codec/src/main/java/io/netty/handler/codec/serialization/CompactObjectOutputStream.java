@@ -45,6 +45,7 @@ class CompactObjectOutputStream extends ObjectOutputStream {
         } else {
             //比较JDK的少很多信息
             write(TYPE_THIN_DESCRIPTOR);
+            //但是也写了类的名字，这点在反序列化时就会用到，很重要
             writeUTF(desc.getName());
         }
     }
