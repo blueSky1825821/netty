@@ -52,6 +52,7 @@ import java.util.concurrent.TimeUnit;
  *             super.exceptionCaught(ctx, cause);
  *         }
  *     }
+ *     |
  * }
  *
  * {@link ServerBootstrap} bootstrap = ...;

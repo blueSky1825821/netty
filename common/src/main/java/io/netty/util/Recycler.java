@@ -224,7 +224,7 @@ public abstract class Recycler<T> {
             if (lastRecycledId != recycleId || stack == null) {
                 throw new IllegalStateException("recycled already");
             }
-            //释放用完的对象到池塘里面去
+            //释放用完的对象到池里面去
             stack.push(this);
         }
     }
