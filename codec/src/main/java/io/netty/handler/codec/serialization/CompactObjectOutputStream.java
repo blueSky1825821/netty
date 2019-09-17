@@ -43,9 +43,9 @@ class CompactObjectOutputStream extends ObjectOutputStream {
             write(TYPE_FAT_DESCRIPTOR);
             super.writeClassDescriptor(desc);
         } else {
-            //比较JDK的少很多信息:元信息
+            //比较JDK的,少很多信息:元信息
             write(TYPE_THIN_DESCRIPTOR);
-            //但是也写了类的名字，这点在反序列化时就会用到，很重要
+            //但是也写了类的名字，这点在反序列化（用反射）时就会用到，很重要
             writeUTF(desc.getName());
         }
         /**比如JDK多写了下面一些信息
