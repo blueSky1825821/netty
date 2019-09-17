@@ -191,6 +191,7 @@ public class DefaultSocketChannelConfig extends DefaultChannelConfig
     @Override
     public SocketChannelConfig setKeepAlive(boolean keepAlive) {
         try {
+            //JDK调用
             javaSocket.setKeepAlive(keepAlive);
         } catch (SocketException e) {
             throw new ChannelException(e);
