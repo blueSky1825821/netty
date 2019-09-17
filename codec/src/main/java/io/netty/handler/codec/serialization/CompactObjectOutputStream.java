@@ -48,5 +48,17 @@ class CompactObjectOutputStream extends ObjectOutputStream {
             //但是也写了类的名字，这点在反序列化时就会用到，很重要
             writeUTF(desc.getName());
         }
+        /**比如JDK多写了下面一些信息
+        out.writeShort(fields.length);
+        for (int i = 0; i < fields.length; i++) {
+            ObjectStreamField f = fields[i];
+            out.writeByte(f.getTypeCode());
+            out.writeUTF(f.getName());
+            if (!f.isPrimitive()) {
+                out.writeTypeString(f.getTypeString());
+            }
+        }
+        */
+
     }
 }
