@@ -31,7 +31,7 @@ class CompactObjectOutputStream extends ObjectOutputStream {
 
     @Override
     protected void writeStreamHeader() throws IOException {
-        //比较JDK的，少一个.writeShort(STREAM_MAGIC);
+        //比较JDK的，少一个.writeShort(STREAM_MAGIC); 魔数
         writeByte(STREAM_VERSION);
     }
 
