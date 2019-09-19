@@ -16,6 +16,7 @@
 package io.netty.example.echo;
 
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -63,7 +64,10 @@ public final class EchoServer {
               //两种设置keepalive风格
              .childOption(ChannelOption.SO_KEEPALIVE, true)
              .childOption(NioChannelOption.SO_KEEPALIVE, true)
-             .childHandler(new ChannelInitializer<SocketChannel>() {
+
+              //切换到unpooled的方式之一
+             .childOption(ChannelOption.ALLOCATOR, UnpooledByteBufAllocator.DEFAULT)
+                    .childHandler(new ChannelInitializer<SocketChannel>() {
                  @Override
                  public void initChannel(SocketChannel ch) throws Exception {
                      ChannelPipeline p = ch.pipeline();
