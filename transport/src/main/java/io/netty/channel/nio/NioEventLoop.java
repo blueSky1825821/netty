@@ -550,6 +550,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
 
     private void processSelectedKeys() {
         if (selectedKeys != null) {
+            //不用JDK的selector.selectedKeys(), 性能更好（1%-2%），垃圾回收更少
             processSelectedKeysOptimized();
         } else {
             processSelectedKeysPlain(selector.selectedKeys());
@@ -630,6 +631,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
             // See https://github.com/netty/netty/issues/2363
             selectedKeys.keys[i] = null;
 
+            //呼应于channel的register中的this: 例如：selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);
             final Object a = k.attachment();
 
             if (a instanceof AbstractNioChannel) {
