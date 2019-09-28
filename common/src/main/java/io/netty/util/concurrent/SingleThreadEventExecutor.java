@@ -542,6 +542,7 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
      * Returns the amount of time left until the scheduled task with the closest dead line is executed.
      */
     protected long delayNanos(long currentTimeNanos) {
+        //ScheduledFutureTask在queue中是排序的。
         ScheduledFutureTask<?> scheduledTask = peekScheduledTask();
         if (scheduledTask == null) {
             return SCHEDULE_PURGE_INTERVAL;

@@ -796,6 +796,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
         try {
             int selectCnt = 0;
             long currentTimeNanos = System.nanoTime();
+            //按scheduled的task时间来计算select timeout时间。
             long selectDeadLineNanos = currentTimeNanos + delayNanos(currentTimeNanos);
 
             long normalizedDeadlineNanos = selectDeadLineNanos - initialNanoTime();
@@ -805,8 +806,9 @@ public final class NioEventLoop extends SingleThreadEventLoop {
 
             for (;;) {
                 long timeoutMillis = (selectDeadLineNanos - currentTimeNanos + 500000L) / 1000000L;
-                if (timeoutMillis <= 0) {
+                if (timeoutMillis <= 0) { //已经有定时task需要执行了，或者超过最长等待时间了
                     if (selectCnt == 0) {
+                        //非阻塞，没有数据返回0
                         selector.selectNow();
                         selectCnt = 1;
                     }
@@ -822,7 +824,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                     selectCnt = 1;
                     break;
                 }
-
+                //下面select阻塞中，别人唤醒也可以可以的
                 int selectedKeys = selector.select(timeoutMillis);
                 selectCnt ++;
 
