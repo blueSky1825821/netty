@@ -368,6 +368,7 @@ public abstract class AbstractNioChannel extends AbstractChannel {
         boolean selected = false;
         for (;;) {
             try {
+                logger.info("initial register： " + 0);
                 selectionKey = javaChannel().register(eventLoop().unwrappedSelector(), 0, this);
                 return;
             } catch (CancelledKeyException e) {
@@ -404,6 +405,7 @@ public abstract class AbstractNioChannel extends AbstractChannel {
         //假设之前没有监听readInterestOp，则监听readInterestOp
         if ((interestOps & readInterestOp) == 0) {
             //NioServerSocketChannel: readInterestOp = OP_ACCEPT = 1 << 4 = 16
+            logger.info("interest ops： " + readInterestOp);
             selectionKey.interestOps(interestOps | readInterestOp);
         }
     }
