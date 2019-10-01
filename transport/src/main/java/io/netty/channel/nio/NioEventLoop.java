@@ -558,6 +558,8 @@ public final class NioEventLoop extends SingleThreadEventLoop {
     void cancel(SelectionKey key) {
         key.cancel();
         cancelledKeys ++;
+        //下面是优化：当处理一批事件时，发现很多连接都断了（默认256），
+        // 这个时候后面的事件可能都失效了，所以不妨select again下。
         if (cancelledKeys >= CLEANUP_INTERVAL) {
             cancelledKeys = 0;
             needsToSelectAgain = true;
