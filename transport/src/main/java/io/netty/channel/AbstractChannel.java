@@ -889,6 +889,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
             assertEventLoop();
 
             ChannelOutboundBuffer outboundBuffer = this.outboundBuffer;
+            //outboundBuffer == null表明channel关闭了。
             if (outboundBuffer == null) {
                 return;
             }
