@@ -47,16 +47,21 @@ public class DefaultMaxBytesRecvByteBufAllocator implements MaxBytesRecvByteBufA
             }
         };
 
+        @Deprecated
         @Override
         public ByteBuf allocate(ByteBufAllocator alloc) {
             return alloc.ioBuffer(guess());
         }
 
+        @Deprecated
         @Override
         public int guess() {
-            return Math.min(individualReadMax, bytesToRead);
+            int min = Math.min(individualReadMax, bytesToRead);
+            System.out.println("guess size: " + min);
+            return min;
         }
 
+        @Deprecated
         @Override
         public void reset(ChannelConfig config) {
             bytesToRead = maxBytesPerRead();

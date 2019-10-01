@@ -182,7 +182,7 @@ public abstract class AbstractNioByteChannel extends AbstractNioChannel {
                 //
                 // See https://github.com/netty/netty/issues/2254
                 if (!readPending && !config.isAutoRead()) {
-                  //  removeReadOp();
+                   removeReadOp();
                 }
             }
         }

@@ -128,7 +128,7 @@ public class AdaptiveRecvByteBufAllocator extends DefaultMaxMessagesRecvByteBufA
 
         @Override
         public int guess() {
-            return nextReceiveBufferSize;
+             return nextReceiveBufferSize;
         }
 
         /**
