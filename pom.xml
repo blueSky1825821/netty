@@ -342,7 +342,6 @@
     <module>resolver-dns</module>
     <module>tarball</module>
     <module>transport</module>
-    <module>transport-native-unix-common-tests</module>
     <module>transport-native-unix-common</module>
     <module>transport-native-epoll</module>
     <module>transport-native-kqueue</module>
@@ -352,12 +351,6 @@
     <module>handler</module>
     <module>handler-proxy</module>
     <module>example</module>
-    <module>testsuite</module>
-    <module>testsuite-autobahn</module>
-    <module>testsuite-http2</module>
-    <module>testsuite-osgi</module>
-    <module>testsuite-shading</module>
-    <module>testsuite-native-image</module>
     <module>microbench</module>
     <module>bom</module>
   </modules>
@@ -924,8 +917,8 @@
           </dependency>
         </dependencies>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
+<!--      <plugin>
+      <groupId>org.codehaus.mojo</groupId>
         <artifactId>xml-maven-plugin</artifactId>
         <version>1.0.1</version>
         <executions>
@@ -936,7 +929,7 @@
             </goals>
             <phase>validate</phase>
           </execution>
-        </executions>
+        </executions>&ndash;&gt;
         <configuration>
           <formatFileSets>
             <formatFileSet>
@@ -948,7 +941,7 @@
           </formatFileSets>
           <useDefaultFormatFileSet>false</useDefaultFormatFileSet>
         </configuration>
-      </plugin>
+      </plugin>-->
       <!-- Download the npn-boot.jar in advance to add it to the boot classpath. -->
       <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
