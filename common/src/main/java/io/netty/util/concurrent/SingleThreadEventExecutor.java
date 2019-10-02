@@ -708,8 +708,8 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
             } else {
                 switch (oldState) {
                     case ST_NOT_STARTED:
-                    case ST_STARTED:
-                        newState = ST_SHUTTING_DOWN;
+                    case ST_STARTED: //2
+                        newState = ST_SHUTTING_DOWN; //3
                         break;
                     default:
                         newState = oldState;
