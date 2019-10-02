@@ -711,6 +711,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                     @Override
                     public void run() {
                         try {
+                            //走到这，说明solinger设置了，等待数据发送完才真正的关闭
                             // Execute the close.
                             doClose0(promise);
                         } finally {
