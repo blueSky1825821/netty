@@ -37,7 +37,7 @@ public class AdaptiveRecvByteBufAllocator extends DefaultMaxMessagesRecvByteBufA
     //最小分配
     static final int DEFAULT_MINIMUM = 64;
     //初始分配
-    static final int DEFAULT_INITIAL = 128;
+    static final int DEFAULT_INITIAL = 1024;
     //最大分配
     static final int DEFAULT_MAXIMUM = 65536;
 
