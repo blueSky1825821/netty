@@ -757,6 +757,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
         private void doClose0(ChannelPromise promise) {
             try {
                 doClose();
+                logger.info("close channel: " + this.localAddress() + " -- " + this.remoteAddress());
                 closeFuture.setClosed();
                 safeSetSuccess(promise);
             } catch (Throwable t) {
