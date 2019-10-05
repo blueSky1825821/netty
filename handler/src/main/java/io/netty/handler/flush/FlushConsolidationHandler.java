@@ -129,6 +129,7 @@ public class FlushConsolidationHandler extends ChannelDuplexHandler {
                 flushNow(ctx);
             }
         } else if (consolidateWhenNoReadInProgress) {
+            //适用于业务处理比较慢，或者主动写的情况
             // Flush immediately if we reach the threshold, otherwise schedule
             if (++flushPendingCount == explicitFlushAfterFlushes) {
                 flushNow(ctx);
