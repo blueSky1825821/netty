@@ -413,6 +413,7 @@ public class NioSocketChannel extends AbstractNioByteChannel implements io.netty
                         return;
                     }
                     adjustMaxBytesPerGatheringWrite(attemptedBytes, localWrittenBytes, maxBytesPerGatheringWrite);
+                    //从ChannelOutboundBuffer中移除已经写出的数据
                     in.removeBytes(localWrittenBytes);
                     --writeSpinCount;
                     break;
@@ -456,6 +457,7 @@ public class NioSocketChannel extends AbstractNioByteChannel implements io.netty
                     // because we try to read or write until the actual close happens which may be later due
                     // SO_LINGER handling.
                     // See https://github.com/netty/netty/issues/4449
+                    //需要逗留，所以提交到另外Executor中执行，且提前deregister掉，防止逗留期间又来数据了。
                     doDeregister();
                     return GlobalEventExecutor.INSTANCE;
                 }
