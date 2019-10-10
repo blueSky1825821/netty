@@ -556,6 +556,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
     }
 
     void cancel(SelectionKey key) {
+        //下面这个cancel: 实际没有“执行”，因为在关闭channel的时候执行过了。
         key.cancel();
         cancelledKeys ++;
         //下面是优化：当处理一批事件时，发现很多连接都断了（默认256），
