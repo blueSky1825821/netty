@@ -587,6 +587,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
         for (;;) {
             final SelectionKey k = i.next();
             final Object a = k.attachment();
+            //移除selection key : 上次调用next（）结果
             i.remove();
 
             if (a instanceof AbstractNioChannel) {
