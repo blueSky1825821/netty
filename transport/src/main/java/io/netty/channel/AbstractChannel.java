@@ -712,7 +712,7 @@ public abstract class AbstractChannel extends DefaultAttributeMap implements Cha
                     @Override
                     public void run() {
                         try {
-                            //走到这，说明solinger设置了，Close会阻塞一定时间再关闭
+                            //走到这，说明solinger(单位:秒)设置了，Close会阻塞一定时间/或数据处理完毕再关闭
                             // Execute the close.
                             doClose0(promise);
                         } finally {

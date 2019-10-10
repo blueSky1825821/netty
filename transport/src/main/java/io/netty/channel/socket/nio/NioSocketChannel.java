@@ -457,9 +457,9 @@ public class NioSocketChannel extends AbstractNioByteChannel implements io.netty
                     // because we try to read or write until the actual close happens which may be later due
                     // SO_LINGER handling.
                     // See https://github.com/netty/netty/issues/4449
-                    //需要逗留，所以提交到另外Executor中执行；
-                    //提前deregister掉，防止逗留期间又来数据了。
-                    //deregister 包含 selection key 的 cancel 的原因。
+                    //需要逗留到数据收发完成或设置的时间，所以提交到另外Executor中执行；
+                    //提前deregister掉，逗留期不接受新的数据了；
+                    //deregister 包含 selection key 的 cancel 的原因之一。
                     doDeregister();
                     return GlobalEventExecutor.INSTANCE;
                 }
