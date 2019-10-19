@@ -355,9 +355,11 @@ public class GlobalTrafficShapingHandler extends AbstractTrafficShapingHandler {
             newToSend = new ToSend(delay + now, msg, size, promise);
             perChannel.messagesQueue.addLast(newToSend);
             perChannel.queueSize += size;
+            //上面2个queueSize不一样，上面少个s，代表channel上的queue,下面是global的
             queuesSize.addAndGet(size);
-            //size超标，或者需要停的时间过长，设置writable为false，提醒让上面的handler不要写了。
+            //channel的queue size超标，或者需要停的时间过长，设置writable为false，提醒让上面的handler不要写了。
             checkWriteSuspend(ctx, delay, perChannel.queueSize);
+            //global的queue size超标,
             if (queuesSize.get() > maxGlobalWriteSize) {
                 globalSizeExceeded = true;
             }
