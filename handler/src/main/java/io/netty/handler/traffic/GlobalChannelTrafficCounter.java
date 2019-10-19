@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
  * other channel's TrafficCounters. In particular, there are no scheduler for those
  * channel's TrafficCounters because it is managed by this one.
  */
-public class GlobalChannelTrafficCounter extends TrafficCounter {
+public class   GlobalChannelTrafficCounter extends TrafficCounter {
     /**
      * @param trafficShapingHandler the associated {@link GlobalChannelTrafficShapingHandler}.
      * @param executor the underlying executor service for scheduling checks (both Global and per Channel).

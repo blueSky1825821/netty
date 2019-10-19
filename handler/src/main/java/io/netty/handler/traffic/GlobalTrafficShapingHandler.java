@@ -348,6 +348,7 @@ public class GlobalTrafficShapingHandler extends AbstractTrafficShapingHandler {
                 perChannel.lastWriteTimestamp = now;
                 return;
             }
+            //预计delay时间过长
             if (delay > maxTime && now + delay - perChannel.lastWriteTimestamp > maxTime) {
                 delay = maxTime;
             }
@@ -355,6 +356,7 @@ public class GlobalTrafficShapingHandler extends AbstractTrafficShapingHandler {
             perChannel.messagesQueue.addLast(newToSend);
             perChannel.queueSize += size;
             queuesSize.addAndGet(size);
+            //size超标，或者需要停的时间过长，设置writable为false，提醒让上面的handler不要写了。
             checkWriteSuspend(ctx, delay, perChannel.queueSize);
             if (queuesSize.get() > maxGlobalWriteSize) {
                 globalSizeExceeded = true;
