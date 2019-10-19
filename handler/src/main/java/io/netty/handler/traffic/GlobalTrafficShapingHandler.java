@@ -353,6 +353,7 @@ public class GlobalTrafficShapingHandler extends AbstractTrafficShapingHandler {
                 delay = maxTime;
             }
             newToSend = new ToSend(delay + now, msg, size, promise);
+            //不管什么情况，都直接入queue，所以可能会OOM,所以后面要根据queue的情况，改变可写标记位。
             perChannel.messagesQueue.addLast(newToSend);
             perChannel.queueSize += size;
             //上面2个queueSize不一样，上面少个s，代表channel上的queue,下面是global的
