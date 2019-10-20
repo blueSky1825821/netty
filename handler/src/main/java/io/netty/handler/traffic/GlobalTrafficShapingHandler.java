@@ -399,7 +399,7 @@ public class GlobalTrafficShapingHandler extends AbstractTrafficShapingHandler {
                 releaseWriteSuspended(ctx);
             }
         }
-        //这个地方“补一刀”很重要，因为前面的handler执行flush的时候，并没有数据flush，因为数据被流量整形缓存起来了。
+        //这个地方“补一刀”很重要，因为前面的handler执行flush的时候，可能并没有数据flush，因为数据被流量整形缓存起来了。
         ctx.flush();
     }
 }
