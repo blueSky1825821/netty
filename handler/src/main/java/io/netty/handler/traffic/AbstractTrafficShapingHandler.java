@@ -476,6 +476,7 @@ public abstract class AbstractTrafficShapingHandler extends ChannelDuplexHandler
     public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
         long size = calculateSize(msg);
         long now = TrafficCounter.milliSecondFromNano();
+        //当数据不是bytebuffer时，size计算出是-1，所以不会走到流量整形里面，所以handler的位置很重要。
         if (size > 0) {
             // compute the number of ms to wait before reopening the channel
             long wait = trafficCounter.readTimeToWait(size, readLimit, maxTime, now);
@@ -647,6 +648,7 @@ public abstract class AbstractTrafficShapingHandler extends ChannelDuplexHandler
         if (msg instanceof ByteBufHolder) {
             return ((ByteBufHolder) msg).content().readableBytes();
         }
+
         return -1;
     }
 }
