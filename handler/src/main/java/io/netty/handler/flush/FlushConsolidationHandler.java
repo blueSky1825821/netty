@@ -122,14 +122,16 @@ public class FlushConsolidationHandler extends ChannelDuplexHandler {
 
     @Override
     public void flush(ChannelHandlerContext ctx) throws Exception {
-        if (readInProgress) {
+        if (readInProgress) { //正在读的时候
             // If there is still a read in progress we are sure we will see a channelReadComplete(...) call. Thus
             // we only need to flush if we reach the explicitFlushAfterFlushes limit.
+            //每explicitFlushAfterFlushes个“批量”写（flush）一次
+            //不足怎么办？channelReadComplete会flush掉后面的
             if (++flushPendingCount == explicitFlushAfterFlushes) {
                 flushNow(ctx);
             }
         } else if (consolidateWhenNoReadInProgress) {
-            //适用于业务处理比较慢，或者主动写的情况
+            //连闲（不读）的时候都不放过，试图“优化”
             // Flush immediately if we reach the threshold, otherwise schedule
             if (++flushPendingCount == explicitFlushAfterFlushes) {
                 flushNow(ctx);
@@ -137,6 +139,7 @@ public class FlushConsolidationHandler extends ChannelDuplexHandler {
                 scheduleFlush(ctx);
             }
         } else {
+            //没有开启consolidateWhenNoReadInProgress时，只要不是在读（说明不忙），就可以写了
             // Always flush directly
             flushNow(ctx);
         }
