@@ -598,6 +598,8 @@ public abstract class AbstractTrafficShapingHandler extends ChannelDuplexHandler
      * @param queueSize the current queueSize
      */
     void checkWriteSuspend(ChannelHandlerContext ctx, long delay, long queueSize) {
+        //可能会OOM了，或者需要“等待”的时间太长了，就不建议再写了。
+        //类似景点，发现排队时间过长，或者人满为患了，这个时候出公告，不建议大家再进来了。
         if (queueSize > maxWriteSize || delay > maxWriteDelay) {
             setUserDefinedWritability(ctx, false);
         }
