@@ -139,7 +139,7 @@ public class FlushConsolidationHandler extends ChannelDuplexHandler {
                 scheduleFlush(ctx);
             }
         } else {
-            //没有开启consolidateWhenNoReadInProgress时，只要不是在读（说明不忙），就可以写了
+            //没有开启consolidateWhenNoReadInProgress时，只要不是在读（说明不忙）或者异步化，就可以写了
             // Always flush directly
             flushNow(ctx);
         }
