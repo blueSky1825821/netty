@@ -215,6 +215,7 @@ public class FlushConsolidationHandler extends ChannelDuplexHandler {
         ctx.flush();
     }
 
+    //尽快，但是给个优化的机会
     private void scheduleFlush(final ChannelHandlerContext ctx) {
         if (nextScheduledFlush == null) {
             // Run as soon as possible, but still yield to give a chance for additional writes to enqueue.
