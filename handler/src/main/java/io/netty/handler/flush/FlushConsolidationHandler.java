@@ -131,7 +131,8 @@ public class FlushConsolidationHandler extends ChannelDuplexHandler {
                 flushNow(ctx);
             }
         } else if (consolidateWhenNoReadInProgress) {
-            //连“闲”（不读）的时候（比如没有请求了，但是内部还是忙的团团转，没有消化的时候，所以还是会写响应）都不放过，试图“优化”
+            //（业务异步化情况下）开启consolidateWhenNoReadInProgress时，优化flush
+            //（比如没有读请求了，但是内部还是忙的团团转，没有消化的时候，所以还是会写响应）
             // Flush immediately if we reach the threshold, otherwise schedule
             if (++flushPendingCount == explicitFlushAfterFlushes) {
                 flushNow(ctx);
@@ -139,7 +140,7 @@ public class FlushConsolidationHandler extends ChannelDuplexHandler {
                 scheduleFlush(ctx);
             }
         } else {
-            //没有开启consolidateWhenNoReadInProgress时，只要不是在读（说明不忙）或者异步化，就可以写了
+            //（业务异步化情况下）没有开启consolidateWhenNoReadInProgress时，直接flush
             // Always flush directly
             flushNow(ctx);
         }
