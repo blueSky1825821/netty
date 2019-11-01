@@ -502,6 +502,8 @@ public abstract class AbstractTrafficShapingHandler extends ChannelDuplexHandler
                         reopenTask = new ReopenReadTimerTask(ctx);
                         attr.set(reopenTask);
                     }
+
+                    //过wait时间后，重新打开“读”功能
                     ctx.executor().schedule(reopenTask, wait, TimeUnit.MILLISECONDS);
                     if (logger.isDebugEnabled()) {
                         logger.debug("Suspend final status => " + config.isAutoRead() + ':'
