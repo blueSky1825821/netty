@@ -552,6 +552,7 @@ public abstract class AbstractTrafficShapingHandler extends ChannelDuplexHandler
     @Override
     public void write(final ChannelHandlerContext ctx, final Object msg, final ChannelPromise promise)
             throws Exception {
+        //如果TS的handler放错了位置，接受的不是byte buffer之类，则直接跳过了
         long size = calculateSize(msg);
         long now = TrafficCounter.milliSecondFromNano();
         if (size > 0) {
@@ -567,6 +568,7 @@ public abstract class AbstractTrafficShapingHandler extends ChannelDuplexHandler
             }
         }
         // to maintain order of write
+        //注意这个地方delay是0，表示不等待
         submitWrite(ctx, msg, size, 0, now, promise);
     }
 
