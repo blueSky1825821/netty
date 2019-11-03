@@ -40,12 +40,10 @@ public final class SecureChatClient {
     static final int PORT = Integer.parseInt(System.getProperty("port", "8992"));
 
     public static void main(String[] args) throws Exception {
-        //new ciphers
-        List<String> tls_rsa_with_aes_256_cbc_sha = Arrays.asList("TLS_RSA_WITH_AES_256_CBC_SHA");
 
-        //set ciphers
+        //set ciphers: "TLS_RSA_WITH_AES_256_CBC_SHA"
         final SslContext sslCtx = SslContextBuilder.forClient()
-                .trustManager(InsecureTrustManagerFactory.INSTANCE).ciphers(tls_rsa_with_aes_256_cbc_sha).build();
+                .trustManager(InsecureTrustManagerFactory.INSTANCE).ciphers(Arrays.asList("TLS_RSA_WITH_AES_256_CBC_SHA")).build();
 
         EventLoopGroup group = new NioEventLoopGroup();
         try {
