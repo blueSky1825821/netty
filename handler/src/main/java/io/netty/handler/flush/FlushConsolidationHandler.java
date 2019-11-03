@@ -120,6 +120,11 @@ public class FlushConsolidationHandler extends ChannelDuplexHandler {
         this.ctx = ctx;
     }
 
+    //
+    //同步：           read ->  writeAndFlush -> readComplete
+    //异步：           read ->  readComplete  -> writeAndFlush
+    //ReadInProgress  000001111111111111111111110000000000000
+    //                000001111000000000000000000000000000000
     @Override
     public void flush(ChannelHandlerContext ctx) throws Exception {
         //根据业务线程是否复用IO线程两种情况来考虑：
