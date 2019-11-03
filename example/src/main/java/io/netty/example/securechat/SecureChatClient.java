@@ -28,6 +28,8 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Simple SSL chat client modified from {@link TelnetClient}.
@@ -38,9 +40,12 @@ public final class SecureChatClient {
     static final int PORT = Integer.parseInt(System.getProperty("port", "8992"));
 
     public static void main(String[] args) throws Exception {
-        // Configure SSL.
+        //new ciphers
+        List<String> tls_rsa_with_aes_256_cbc_sha = Arrays.asList("TLS_RSA_WITH_AES_256_CBC_SHA");
+
+        //set ciphers
         final SslContext sslCtx = SslContextBuilder.forClient()
-            .trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+                .trustManager(InsecureTrustManagerFactory.INSTANCE).ciphers(tls_rsa_with_aes_256_cbc_sha).build();
 
         EventLoopGroup group = new NioEventLoopGroup();
         try {
