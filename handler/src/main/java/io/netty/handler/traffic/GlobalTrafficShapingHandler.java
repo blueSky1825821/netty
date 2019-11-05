@@ -329,6 +329,7 @@ public class GlobalTrafficShapingHandler extends AbstractTrafficShapingHandler {
     void submitWrite(final ChannelHandlerContext ctx, final Object msg,
             final long size, final long writedelay, final long now,
             final ChannelPromise promise) {
+        //下面一段是为了获取channel对应的PerChannel，每个Perchannel有一个queue,存缓存不发的数据
         Channel channel = ctx.channel();
         Integer key = channel.hashCode();
         PerChannel perChannel = channelQueues.get(key);
@@ -342,6 +343,7 @@ public class GlobalTrafficShapingHandler extends AbstractTrafficShapingHandler {
         boolean globalSizeExceeded = false;
         // write operations need synchronization
         synchronized (perChannel) {
+            //不需要等 且 queue 中没有数据，直接放行
             if (writedelay == 0 && perChannel.messagesQueue.isEmpty()) {
                 trafficCounter.bytesRealWriteFlowControl(size);
                 ctx.write(msg, promise);
