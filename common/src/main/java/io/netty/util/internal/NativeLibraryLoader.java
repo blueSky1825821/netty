@@ -134,6 +134,7 @@ public final class NativeLibraryLoader {
         List<Throwable> suppressed = new ArrayList<Throwable>();
         try {
             // first try to load from java.library.path
+            //相对路径加载
             loadLibrary(loader, name, false);
             return;
         } catch (Throwable ex) {
@@ -157,6 +158,7 @@ public final class NativeLibraryLoader {
         }
         try {
             if (url == null) {
+                //MAC系统
                 if (PlatformDependent.isOsx()) {
                     String fileName = path.endsWith(".jnilib") ? NATIVE_RESOURCE_HOME + "lib" + name + ".dynlib" :
                             NATIVE_RESOURCE_HOME + "lib" + name + ".jnilib";
@@ -201,6 +203,7 @@ public final class NativeLibraryLoader {
             // because otherwise Windows will refuse to load it when it's in use by other process.
             closeQuietly(out);
             out = null;
+            //绝对路径加载
             loadLibrary(loader, tmpFile.getPath(), true);
         } catch (UnsatisfiedLinkError e) {
             try {
@@ -232,6 +235,7 @@ public final class NativeLibraryLoader {
             // After we load the library it is safe to delete the file.
             // We delete the file immediately to free up resources as soon as possible,
             // and if this fails fallback to deleting on JVM exit.
+            //删掉，删不掉，Jvm关闭时候，再删
             if (tmpFile != null && (!DELETE_NATIVE_LIB_AFTER_LOADING || !tmpFile.delete())) {
                 tmpFile.deleteOnExit();
             }
