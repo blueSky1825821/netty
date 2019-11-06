@@ -183,10 +183,12 @@ public final class NativeLibraryLoader {
             String prefix = libname.substring(0, index);
             String suffix = libname.substring(index);
 
+            //创建临时文件
             tmpFile = File.createTempFile(prefix, suffix, WORKDIR);
             in = url.openStream();
             out = new FileOutputStream(tmpFile);
 
+            //把META-INF/native/下的库复制成临时文件
             if (shouldShadedLibraryIdBePatched(packagePrefix)) {
                 patchShadedLibraryId(in, out, originalName, name);
             } else {
@@ -235,7 +237,7 @@ public final class NativeLibraryLoader {
             // After we load the library it is safe to delete the file.
             // We delete the file immediately to free up resources as soon as possible,
             // and if this fails fallback to deleting on JVM exit.
-            //删掉，删不掉，Jvm关闭时候，再删
+            //删掉临时文件，删不掉，Jvm关闭时候，再删
             if (tmpFile != null && (!DELETE_NATIVE_LIB_AFTER_LOADING || !tmpFile.delete())) {
                 tmpFile.deleteOnExit();
             }
