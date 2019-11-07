@@ -69,7 +69,7 @@ public final class NativeLibraryLoader {
             WORKDIR = f;
             logger.debug("-Dio.netty.native.workdir: " + WORKDIR);
         } else {
-            //-Dio.netty.tmpdir
+            //没有配置io.netty.native.workdir，就取-Dio.netty.tmpdir
             WORKDIR = PlatformDependent.tmpdir();
             logger.debug("-Dio.netty.native.workdir: " + WORKDIR + " (io.netty.tmpdir)");
         }
@@ -237,7 +237,7 @@ public final class NativeLibraryLoader {
             // After we load the library it is safe to delete the file.
             // We delete the file immediately to free up resources as soon as possible,
             // and if this fails fallback to deleting on JVM exit.
-            //删掉临时文件，删不掉，Jvm关闭时候，再删
+            //删掉临时文件，删不掉，Jvm关闭时候，再删，取决于："-Dio.netty.native.deleteLibAfterLoading
             if (tmpFile != null && (!DELETE_NATIVE_LIB_AFTER_LOADING || !tmpFile.delete())) {
                 tmpFile.deleteOnExit();
             }
