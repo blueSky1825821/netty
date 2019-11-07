@@ -287,6 +287,7 @@ public class TrafficCounter {
         }
 
         this.trafficShapingHandler = trafficShapingHandler;
+        //执行Traffic Counter的实际操作者
         this.executor = executor;
         this.name = name;
 
