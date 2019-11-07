@@ -173,6 +173,7 @@ public final class NativeLibraryLoader {
                         throw fnf;
                     }
                 } else {
+                    //linux等系统下，不尝试再找了，直接报错
                     FileNotFoundException fnf = new FileNotFoundException(path);
                     ThrowableUtil.addSuppressedAndClear(fnf, suppressed);
                     throw fnf;
