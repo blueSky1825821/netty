@@ -58,6 +58,6 @@ public class ObjectEncoder extends MessageToByteEncoder<Serializable> {
 
         int endIdx = out.writerIndex();
 
-        out.setInt(startIdx, endIdx - startIdx - 4);
+        out.setInt(startIdx, endIdx - startIdx - 4); //設置長度
     }
 }
