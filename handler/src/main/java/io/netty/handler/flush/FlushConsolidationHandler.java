@@ -128,7 +128,7 @@ public class FlushConsolidationHandler extends ChannelDuplexHandler {
     @Override
     public void flush(ChannelHandlerContext ctx) throws Exception {
         //根据业务线程是否复用IO线程两种情况来考虑：
-        //复用情况
+        //复用情况/同步情况都适用
         if (readInProgress) { //正在读的时候
             // If there is still a read in progress we are sure we will see a channelReadComplete(...) call. Thus
             // we only need to flush if we reach the explicitFlushAfterFlushes limit.
@@ -138,7 +138,7 @@ public class FlushConsolidationHandler extends ChannelDuplexHandler {
                 flushNow(ctx);
             }
 
-         //以下是非复用情况：异步情况
+         //以下所有代码是非复用情况：异步情况
         } else if (consolidateWhenNoReadInProgress) {
             //（业务异步化情况下）开启consolidateWhenNoReadInProgress时，优化flush
             //（比如没有读请求了，但是内部还是忙的团团转，没有消化的时候，所以还是会写响应）
@@ -149,11 +149,18 @@ public class FlushConsolidationHandler extends ChannelDuplexHandler {
                 scheduleFlush(ctx);
             }
         } else {
-            //（业务异步化情况下）没有开启consolidateWhenNoReadInProgress时，直接flush
+            //（仅发生在业务异步化情况下）没有开启consolidateWhenNoReadInProgress时，直接flush
             // Always flush directly
             flushNow(ctx);
         }
     }
+
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+        readInProgress = true;
+        ctx.fireChannelRead(msg);
+    }
+
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
@@ -162,11 +169,11 @@ public class FlushConsolidationHandler extends ChannelDuplexHandler {
         ctx.fireChannelReadComplete();
     }
 
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        readInProgress = true;
-        ctx.fireChannelRead(msg);
+    private void resetReadAndFlushIfNeeded(ChannelHandlerContext ctx) {
+        readInProgress = false;
+        flushIfNeeded(ctx);
     }
+
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
@@ -203,10 +210,7 @@ public class FlushConsolidationHandler extends ChannelDuplexHandler {
         flushIfNeeded(ctx);
     }
 
-    private void resetReadAndFlushIfNeeded(ChannelHandlerContext ctx) {
-        readInProgress = false;
-        flushIfNeeded(ctx);
-    }
+
 
     private void flushIfNeeded(ChannelHandlerContext ctx) {
         if (flushPendingCount > 0) {
