@@ -33,6 +33,7 @@ public class CombinedChannelDuplexHandler<I extends ChannelInboundHandler, O ext
 
     private static final InternalLogger logger = InternalLoggerFactory.getInstance(CombinedChannelDuplexHandler.class);
 
+    //假设只删除一个handler，怎么识别？需要一个内部的ctx来分别标识记录
     private DelegatingChannelHandlerContext inboundCtx;
     private DelegatingChannelHandlerContext outboundCtx;
     private volatile boolean handlerAdded;
